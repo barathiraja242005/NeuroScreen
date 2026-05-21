@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NeuroScreen — Thermal Imaging Autism Screening Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #FFF5E1;
+    --amber: #EBC176;
+    --gold: #C48B28;
+    --brown: #5A3C0B;
+
+    --bg: #FFFBF2;
+    --bg-2: #FFF5E1;
+    --surface: #ffffff;
+    --surface-2: #FBEFD6;
+    --line: #E7D6B0;
+    --line-soft: #F0E3C4;
+    --text: #3C2A08;
+    --text-dim: #7A6535;
+    --text-faint: #A8966A;
+    --accent: #C48B28;
+    --accent-deep: #5A3C0B;
+    --warn: #C48B28;
+    --danger: #B5541E;
+    --ok: #6E8B3D;
+    --radius: 14px;
+    --shadow: 0 18px 50px -16px rgba(90,60,11,0.28);
+    --shadow-sm: 0 8px 24px -10px rgba(90,60,11,0.22);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--gold); color: var(--cream); }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+  h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; line-height: 1.15; letter-spacing: -0.01em; color: var(--brown); }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ---------- NAV ---------- */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,251,242,0.86);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 70px; }
+  .logo { display: flex; align-items: center; gap: 11px; font-family: 'Fraunces', serif; font-size: 1.32rem; font-weight: 600; color: var(--brown); }
+  .logo-mark {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--gold), var(--brown));
+    display: grid; place-items: center; color: var(--cream); font-size: 1.1rem;
+  }
+  .nav-links { display: flex; gap: 30px; list-style: none; }
+  .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.94rem; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    background: var(--gold); color: var(--cream); border: none;
+    padding: 10px 20px; border-radius: 9px; font-family: 'Outfit', sans-serif;
+    font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: transform 0.15s, background 0.2s;
+  }
+  .nav-cta:hover { transform: translateY(-1px); background: var(--brown); }
+  .nav-toggle { display: none; background: none; border: none; color: var(--brown); font-size: 1.5rem; cursor: pointer; }
+
+  /* ---------- HERO ---------- */
+  .hero { position: relative; padding: 96px 0 72px; overflow: hidden; }
+  .hero::before {
+    content: ''; position: absolute; top: -180px; right: -120px;
+    width: 540px; height: 540px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(235,193,118,0.45), transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: -160px; left: -140px;
+    width: 420px; height: 420px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,139,40,0.18), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; position: relative; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--line);
+    padding: 6px 14px; border-radius: 100px; font-size: 0.8rem;
+    color: var(--text-dim); margin-bottom: 22px; box-shadow: var(--shadow-sm);
+  }
+  .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+  .hero h1 { font-size: clamp(2.4rem, 5vw, 3.7rem); margin-bottom: 20px; }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero p.lead { font-size: 1.12rem; color: var(--text-dim); max-width: 480px; margin-bottom: 30px; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--gold); color: var(--cream); border: none;
+    padding: 13px 26px; border-radius: 10px; font-family: 'Outfit', sans-serif;
+    font-weight: 600; font-size: 0.98rem; cursor: pointer; transition: transform 0.15s, background 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); background: var(--brown); }
+  .btn-ghost {
+    background: transparent; color: var(--brown); border: 1px solid var(--line);
+    padding: 13px 26px; border-radius: 10px; font-family: 'Outfit', sans-serif;
+    font-weight: 500; font-size: 0.98rem; cursor: pointer; transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); background: var(--surface-2); }
+
+  .hero-stats { display: flex; gap: 32px; margin-top: 40px; }
+  .hero-stats .stat .num { font-family: 'Fraunces', serif; font-size: 1.7rem; color: var(--brown); }
+  .hero-stats .stat .lbl { font-size: 0.8rem; color: var(--text-faint); }
+
+  /* hero visual card */
+  .scan-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow);
+    position: relative;
+  }
+  .scan-card .scan-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .scan-card .scan-head strong { color: var(--brown); }
+  .scan-card .scan-head span { font-size: 0.82rem; color: var(--text-faint); }
+  .thermal {
+    aspect-ratio: 4/3; border-radius: 10px; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #5A3C0B 0%, #8a5e15 26%, #C48B28 50%, #EBC176 74%, #FFF5E1 100%);
+  }
+  .thermal::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 38% 46% at 50% 44%, rgba(255,245,225,0.82), transparent 62%);
+  }
+  .scan-line {
+    position: absolute; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cream), transparent);
+    box-shadow: 0 0 14px var(--amber);
+    animation: scan 3.4s ease-in-out infinite;
+  }
+  @keyframes scan { 0%,100% { top: 6%; } 50% { top: 94%; } }
+  .scan-meta { display: flex; justify-content: space-between; margin-top: 14px; font-size: 0.78rem; color: var(--text-dim); }
+  .scan-meta .mono { color: var(--gold); }
+
+  /* ---------- SECTION SHARED ---------- */
+  section { padding: 84px 0; }
+  .sec-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .sec-title { font-size: clamp(1.9rem, 3.5vw, 2.6rem); margin-bottom: 14px; }
+  .sec-intro { color: var(--text-dim); max-width: 560px; margin-bottom: 48px; }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .step {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 26px 22px; position: relative;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  }
+  .step:hover { transform: translateY(-4px); border-color: var(--gold); box-shadow: var(--shadow-sm); }
+  .step .step-no {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+    color: var(--gold); margin-bottom: 14px;
+  }
+  .step .step-ico { font-size: 1.6rem; margin-bottom: 10px; display: block; }
+  .step h3 { font-size: 1.12rem; margin-bottom: 6px; }
+  .step p { font-size: 0.88rem; color: var(--text-dim); }
+
+  /* ---------- FEATURES ---------- */
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .feature {
+    background: linear-gradient(180deg, var(--surface), var(--bg-2));
+    border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 30px 26px; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .feature:hover { border-color: var(--gold); box-shadow: var(--shadow-sm); }
+  .feature .f-ico {
+    width: 46px; height: 46px; border-radius: 11px;
+    background: var(--surface-2); display: grid; place-items: center;
+    font-size: 1.35rem; margin-bottom: 16px;
+  }
+  .feature h3 { font-size: 1.18rem; margin-bottom: 8px; }
+  .feature p { font-size: 0.92rem; color: var(--text-dim); }
+
+  /* ---------- DEMO / SCREENING ---------- */
+  #screening { background: var(--bg-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .demo-shell {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 18px; overflow: hidden; box-shadow: var(--shadow);
+  }
+  .demo-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 13px 18px; border-bottom: 1px solid var(--line); background: var(--surface-2);
+  }
+  .demo-bar .dots { display: flex; gap: 6px; }
+  .demo-bar .dots i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .demo-bar .dots i:nth-child(1) { background: #B5541E; }
+  .demo-bar .dots i:nth-child(2) { background: #C48B28; }
+  .demo-bar .dots i:nth-child(3) { background: #6E8B3D; }
+  .demo-bar .url {
+    margin-left: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--text-faint); background: var(--surface); padding: 4px 12px; border-radius: 6px;
+    border: 1px solid var(--line-soft);
+  }
+  .demo-body { padding: 40px; min-height: 420px; }
+
+  /* stepper */
+  .stepper { display: flex; gap: 10px; margin-bottom: 32px; }
+  .stepper .s {
+    flex: 1; text-align: center; font-size: 0.78rem; color: var(--text-faint);
+    padding-bottom: 10px; border-bottom: 2px solid var(--line);
+    transition: color 0.3s, border-color 0.3s;
+  }
+  .stepper .s.active { color: var(--gold); border-color: var(--gold); }
+  .stepper .s.done { color: var(--ok); border-color: var(--ok); }
+
+  .panel { display: none; }
+  .panel.show { display: block; animation: fade 0.4s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* upload */
+  .dropzone {
+    border: 2px dashed var(--line); border-radius: 14px;
+    padding: 48px 24px; text-align: center; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .dropzone:hover, .dropzone.drag { border-color: var(--gold); background: var(--surface-2); }
+  .dropzone .up-ico { font-size: 2.4rem; margin-bottom: 12px; }
+  .dropzone h3 { font-size: 1.15rem; margin-bottom: 6px; }
+  .dropzone p { font-size: 0.86rem; color: var(--text-dim); }
+  .dropzone .pick { color: var(--gold); text-decoration: underline; }
+
+  .preview-row { display: grid; grid-template-columns: 200px 1fr; gap: 26px; align-items: center; }
+  .preview-img {
+    aspect-ratio: 4/3; border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--line); position: relative;
+    background: linear-gradient(135deg, #5A3C0B, #8a5e15 28%, #C48B28 54%, #EBC176 76%, #FFF5E1);
+  }
+  .preview-img img { width: 100%; height: 100%; object-fit: cover; }
+  .preview-info h3 { font-size: 1.1rem; margin-bottom: 4px; }
+  .preview-info .meta { font-size: 0.82rem; color: var(--text-faint); font-family: 'JetBrains Mono', monospace; margin-bottom: 16px; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+  .field label { display: block; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 5px; }
+  .field input, .field select {
+    width: 100%; background: var(--bg); border: 1px solid var(--line);
+    color: var(--text); padding: 9px 12px; border-radius: 8px;
+    font-family: 'Outfit', sans-serif; font-size: 0.9rem;
+  }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--gold); }
+
+  .demo-actions { display: flex; gap: 12px; margin-top: 30px; }
+
+  /* processing */
+  .processing { text-align: center; padding: 40px 0; }
+  .ring { width: 96px; height: 96px; margin: 0 auto 26px; position: relative; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 7; }
+  .ring .track { stroke: var(--line); }
+  .ring .bar { stroke: var(--gold); stroke-linecap: round; transition: stroke-dashoffset 0.3s linear; }
+  .ring .pct {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; color: var(--gold);
+  }
+  .proc-log {
+    max-width: 380px; margin: 0 auto; text-align: left;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+  }
+  .proc-log .ln { color: var(--text-faint); padding: 3px 0; opacity: 0.35; transition: opacity 0.3s, color 0.3s; }
+  .proc-log .ln.on { opacity: 1; color: var(--text-dim); }
+  .proc-log .ln.on b { color: var(--ok); }
+
+  /* result */
+  .result-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px; }
+  .gauge-card {
+    background: var(--bg-2); border: 1px solid var(--line);
+    border-radius: 14px; padding: 28px; text-align: center;
+  }
+  .gauge { width: 170px; height: 170px; margin: 0 auto 16px; position: relative; }
+  .gauge svg { transform: rotate(-90deg); }
+  .gauge circle { fill: none; stroke-width: 13; }
+  .gauge .track { stroke: var(--surface-2); }
+  .gauge .bar { stroke: var(--gold); stroke-linecap: round; }
+  .gauge .center { position: absolute; inset: 0; display: grid; place-items: center; }
+  .gauge .center .big { font-family: 'Fraunces', serif; font-size: 2.4rem; line-height: 1; color: var(--brown); }
+  .gauge .center .sub { font-size: 0.74rem; color: var(--text-faint); }
+  .verdict-pill {
+    display: inline-block; padding: 6px 16px; border-radius: 100px;
+    font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;
+    background: rgba(196,139,40,0.14); color: var(--gold);
+    border: 1px solid rgba(196,139,40,0.3);
+  }
+  .result-detail h3 { font-size: 1.3rem; margin-bottom: 14px; }
+  .metric {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 0.92rem;
+  }
+  .metric:last-of-type { border-bottom: none; }
+  .metric .k { color: var(--text-dim); }
+  .metric .v { font-family: 'JetBrains Mono', monospace; color: var(--brown); }
+  .meter { width: 120px; height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+  .meter i { display: block; height: 100%; background: var(--gold); border-radius: 3px; transition: width 0.9s ease; }
+  .reco {
+    margin-top: 18px; background: var(--surface-2);
+    border: 1px solid var(--line); border-radius: 12px; padding: 18px;
+  }
+  .reco h4 { font-family: 'Outfit', sans-serif; font-size: 0.92rem; color: var(--gold); margin-bottom: 6px; letter-spacing: 0.04em; }
+  .reco p { font-size: 0.88rem; color: var(--text-dim); }
+  .disclaimer {
+    margin-top: 18px; font-size: 0.78rem; color: var(--text-faint);
+    border-left: 2px solid var(--line); padding-left: 12px;
+  }
+
+  /* ---------- TECH ---------- */
+  .tech-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .chip {
+    background: var(--surface); border: 1px solid var(--line);
+    padding: 9px 18px; border-radius: 100px; font-size: 0.88rem;
+    color: var(--text-dim); font-family: 'JetBrains Mono', monospace;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .chip:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ---------- FOOTER ---------- */
+  footer { border-top: 1px solid var(--line); padding: 44px 0 30px; background: var(--bg-2); }
+  .foot-grid { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; }
+  .foot-grid p { font-size: 0.85rem; color: var(--text-faint); max-width: 320px; }
+  .foot-links { display: flex; gap: 26px; list-style: none; }
+  .foot-links a { color: var(--text-dim); text-decoration: none; font-size: 0.88rem; }
+  .foot-links a:hover { color: var(--gold); }
+  .foot-bottom {
+    margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--line);
+    font-size: 0.8rem; color: var(--text-faint); text-align: center;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 880px) {
+    .nav-links { display: none; }
+    .nav-toggle { display: block; }
+    .nav-links.open {
+      display: flex; flex-direction: column; position: absolute;
+      top: 70px; left: 0; right: 0; background: var(--bg-2);
+      border-bottom: 1px solid var(--line); padding: 20px 28px; gap: 18px;
+    }
+    .hero-grid, .result-grid, .preview-row { grid-template-columns: 1fr; }
+    .steps, .features { grid-template-columns: 1fr 1fr; }
+    .demo-body { padding: 26px 20px; }
+    .hero-stats { gap: 22px; }
+    .field-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .steps, .features { grid-template-columns: 1fr; }
+    .stepper .s { font-size: 0.66rem; }
+    .hero { padding: 60px 0 50px; }
+    section { padding: 60px 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="wrap nav-inner">
+    <div class="logo">
+      <span class="logo-mark">&#9672;</span>
+      NeuroScreen
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#features">Platform</a></li>
+      <li><a href="#screening">Screening</a></li>
+      <li><a href="#tech">Technology</a></li>
+    </ul>
+    <button class="nav-cta" onclick="goScreen()">Start Screening</button>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">&#9776;</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="badge"><span class="dot"></span> Prototype &middot; Research Demonstration</span>
+      <h1>Early autism screening through <em>thermal imaging</em>.</h1>
+      <p class="lead">NeuroScreen is a contactless, web-based screening platform that analyses thermal facial patterns to support earlier, more accessible autism evaluation.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="goScreen()">Try the demo</button>
+        <a href="#how"><button class="btn-ghost">See how it works</button></a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="num">4-step</div><div class="lbl">screening flow</div></div>
+        <div class="stat"><div class="num">100%</div><div class="lbl">contactless</div></div>
+        <div class="stat"><div class="num">&lt; 5s</div><div class="lbl">analysis time</div></div>
+      </div>
+    </div>
+    <div class="scan-card">
+      <div class="scan-head">
+        <strong>Live thermal feed</strong>
+        <span class="mono">SENSOR &middot; IR-320</span>
+      </div>
+      <div class="thermal">
+        <div class="scan-line"></div>
+      </div>
+      <div class="scan-meta">
+        <span>Capturing facial thermal map</span>
+        <span class="mono">36.4&deg;C avg</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-tag">// process</div>
+    <h2 class="sec-title">A simple four-step workflow</h2>
+    <p class="sec-intro">From capture to recommendation, the platform guides every screening through a clear, repeatable pipeline.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-no">STEP 01</div>
+        <span class="step-ico">&#128247;</span>
+        <h3>Capture</h3>
+        <p>A thermal facial image is uploaded from a connected IR camera or dataset sample.</p>
+      </div>
+      <div class="step">
+        <div class="step-no">STEP 02</div>
+        <span class="step-ico">&#9881;&#65039;</span>
+        <h3>Preprocess</h3>
+        <p>The image is resized, converted to grayscale and normalised for consistent input.</p>
+      </div>
+      <div class="step">
+        <div class="step-no">STEP 03</div>
+        <span class="step-ico">&#129504;</span>
+        <h3>Classify</h3>
+        <p>A machine learning model evaluates thermal patterns and produces a probability score.</p>
+      </div>
+      <div class="step">
+        <div class="step-no">STEP 04</div>
+        <span class="step-ico">&#128203;</span>
+        <h3>Report</h3>
+        <p>Results are presented with a confidence level and a clear next-step recommendation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-tag">// platform</div>
+    <h2 class="sec-title">Built as a real screening tool</h2>
+    <p class="sec-intro">More than a model &mdash; NeuroScreen is a complete web application designed around how screenings are actually performed and reviewed.</p>
+    <div class="features">
+      <div class="feature">
+        <div class="f-ico">&#129309;</div>
+        <h3>Non-invasive</h3>
+        <p>Thermal imaging requires no physical contact, making screening comfortable and stress-free for children.</p>
+      </div>
+      <div class="feature">
+        <div class="f-ico">&#127760;</div>
+        <h3>Web-accessible</h3>
+        <p>Runs entirely in the browser, so screening can reach clinics and families without specialised software.</p>
+      </div>
+      <div class="feature">
+        <div class="f-ico">&#9889;</div>
+        <h3>Fast turnaround</h3>
+        <p>An end-to-end screening completes in seconds, supporting timely follow-up and intervention.</p>
+      </div>
+      <div class="feature">
+        <div class="f-ico">&#128202;</div>
+        <h3>Clear reporting</h3>
+        <p>Every result includes a confidence score and a plain-language recommendation, not just a raw number.</p>
+      </div>
+      <div class="feature">
+        <div class="f-ico">&#128274;</div>
+        <h3>Privacy-minded</h3>
+        <p>Images are processed for the session only &mdash; designed with sensitive health data in mind.</p>
+      </div>
+      <div class="feature">
+        <div class="f-ico">&#129513;</div>
+        <h3>Modular design</h3>
+        <p>The ML engine is one swappable module, so models can improve without rebuilding the platform.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENING DEMO -->
+<section id="screening">
+  <div class="wrap">
+    <div class="sec-tag">// live demo</div>
+    <h2 class="sec-title">Run a screening</h2>
+    <p class="sec-intro">Upload a thermal facial image to walk through the full screening flow. This demo uses a simulated model for demonstration purposes.</p>
+
+    <div class="demo-shell">
+      <div class="demo-bar">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <span class="url">app.neuroscreen.io/screening</span>
+      </div>
+      <div class="demo-body">
+        <div class="stepper">
+          <div class="s active" id="st0">Upload</div>
+          <div class="s" id="st1">Review</div>
+          <div class="s" id="st2">Analyse</div>
+          <div class="s" id="st3">Result</div>
+        </div>
+
+        <!-- PANEL 0: UPLOAD -->
+        <div class="panel show" id="p0">
+          <div class="dropzone" id="dropzone">
+            <div class="up-ico">&#127777;&#65039;</div>
+            <h3>Upload a thermal image</h3>
+            <p>Drag &amp; drop a file here, or <span class="pick">browse to select</span></p>
+            <p style="margin-top:6px; color:var(--text-faint);">JPG or PNG &middot; No image? A sample will be used automatically.</p>
+            <input type="file" id="fileInput" accept="image/*" hidden />
+          </div>
+          <div class="demo-actions">
+            <button class="btn-primary" onclick="useSample()">Use a sample image instead</button>
+          </div>
+        </div>
+
+        <!-- PANEL 1: REVIEW -->
+        <div class="panel" id="p1">
+          <div class="preview-row">
+            <div class="preview-img" id="previewImg"></div>
+            <div class="preview-info">
+              <h3 id="fileName">thermal_sample_01.jpg</h3>
+              <div class="meta" id="fileMeta">320&times;240 &middot; IR thermal map &middot; ready</div>
+              <div class="field-grid">
+                <div class="field">
+                  <label>Subject reference ID</label>
+                  <input type="text" id="refId" value="NS-2025-0418" />
+                </div>
+                <div class="field">
+                  <label>Age group</label>
+                  <select id="ageGroup">
+                    <option>18&ndash;36 months</option>
+                    <option>3&ndash;5 years</option>
+                    <option>6&ndash;9 years</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-actions">
+            <button class="btn-ghost" onclick="show(0)">Back</button>
+            <button class="btn-primary" onclick="startAnalysis()">Analyse thermal pattern</button>
+          </div>
+        </div>
+
+        <!-- PANEL 2: PROCESSING -->
+        <div class="panel" id="p2">
+          <div class="processing">
+            <div class="ring">
+              <svg width="96" height="96" viewBox="0 0 96 96">
+                <circle class="track" cx="48" cy="48" r="42" />
+                <circle class="bar" id="ringBar" cx="48" cy="48" r="42"
+                  stroke-dasharray="263.9" stroke-dashoffset="263.9" />
+              </svg>
+              <div class="pct" id="ringPct">0%</div>
+            </div>
+            <div class="proc-log">
+              <div class="ln" id="lg0">&rsaquo; loading thermal image &hellip;</div>
+              <div class="ln" id="lg1">&rsaquo; resize &rarr; 224&times;224 &middot; grayscale convert &hellip;</div>
+              <div class="ln" id="lg2">&rsaquo; normalising pixel intensity &hellip;</div>
+              <div class="ln" id="lg3">&rsaquo; extracting facial thermal regions &hellip;</div>
+              <div class="ln" id="lg4">&rsaquo; running classification model &hellip;</div>
+              <div class="ln" id="lg5">&rsaquo; screening complete <b>&#10003;</b></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 3: RESULT -->
+        <div class="panel" id="p3">
+          <div class="result-grid">
+            <div class="gauge-card">
+              <div class="gauge">
+                <svg width="170" height="170" viewBox="0 0 170 170">
+                  <circle class="track" cx="85" cy="85" r="70" />
+                  <circle class="bar" id="gaugeBar" cx="85" cy="85" r="70"
+                    stroke-dasharray="439.8" stroke-dashoffset="439.8" />
+                </svg>
+                <div class="center">
+                  <div>
+                    <div class="big" id="scoreNum">0%</div>
+                    <div class="sub">ASD trait probability</div>
+                  </div>
+                </div>
+              </div>
+              <div class="verdict-pill" id="verdict">Analysing&hellip;</div>
+              <p style="font-size:0.82rem;color:var(--text-faint);">Confidence level on this screening</p>
+            </div>
+            <div class="result-detail">
+              <h3>Thermal pattern analysis</h3>
+              <div class="metric">
+                <span class="k">Periorbital temperature variance</span>
+                <span class="meter"><i id="m0" style="width:0%"></i></span>
+              </div>
+              <div class="metric">
+                <span class="k">Forehead thermal symmetry</span>
+                <span class="meter"><i id="m1" style="width:0%"></i></span>
+              </div>
+              <div class="metric">
+                <span class="k">Nasal region heat signature</span>
+                <span class="meter"><i id="m2" style="width:0%"></i></span>
+              </div>
+              <div class="metric">
+                <span class="k">Model confidence</span>
+                <span class="v" id="confVal">&mdash;</span>
+              </div>
+              <div class="reco">
+                <h4>RECOMMENDATION</h4>
+                <p id="recoText">Generating recommendation&hellip;</p>
+              </div>
+              <p class="disclaimer">This is a research prototype and not a medical diagnostic device. Results are indicative only and must be confirmed by a qualified clinician.</p>
+              <div class="demo-actions">
+                <button class="btn-primary" onclick="show(0)">Run another screening</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH -->
+<section id="tech">
+  <div class="wrap">
+    <div class="sec-tag">// technology</div>
+    <h2 class="sec-title">The stack behind NeuroScreen</h2>
+    <p class="sec-intro">A lightweight, transparent technology stack chosen for accessibility and reproducibility.</p>
+    <div class="tech-row">
+      <span class="chip">HTML5</span>
+      <span class="chip">CSS3</span>
+      <span class="chip">JavaScript</span>
+      <span class="chip">Python</span>
+      <span class="chip">Flask</span>
+      <span class="chip">OpenCV</span>
+      <span class="chip">TensorFlow</span>
+      <span class="chip">Computer Vision</span>
+      <span class="chip">CNN</span>
+      <span class="chip">Thermal Imaging</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:12px;">
+          <span class="logo-mark">&#9672;</span> NeuroScreen
+        </div>
+        <p>A web-based prototype for non-invasive autism screening using thermal imaging and machine learning. Built for academic demonstration.</p>
+      </div>
+      <ul class="foot-links">
+        <li><a href="#how">Process</a></li>
+        <li><a href="#features">Platform</a></li>
+        <li><a href="#screening">Screening</a></li>
+        <li><a href="#tech">Technology</a></li>
+      </ul>
+    </div>
+    <div class="foot-bottom">
+      &copy; 2025 NeuroScreen &middot; Research prototype &middot; Not for clinical use
+    </div>
+  </div>
+</footer>
+
+<script>
+  function goScreen() {
+    document.getElementById('screening').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('navLinks').classList.remove('open');
+  }
+
+  function show(n) {
+    for (let i = 0; i < 4; i++) {
+      document.getElementById('p' + i).classList.toggle('show', i === n);
+      const st = document.getElementById('st' + i);
+      st.classList.remove('active', 'done');
+      if (i < n) st.classList.add('done');
+      if (i === n) st.classList.add('active');
+    }
+    if (n === 0) resetUpload();
+  }
+
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  let imgURL = null;
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault(); dropzone.classList.remove('drag');
+    if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', e => {
+    if (e.target.files.length) handleFile(e.target.files[0]);
+  });
+
+  function handleFile(file) {
+    if (!file.type.startsWith('image/')) { alert('Please upload an image file.'); return; }
+    imgURL = URL.createObjectURL(file);
+    const kb = (file.size / 1024).toFixed(0);
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileMeta').textContent = kb + ' KB \u00b7 thermal map \u00b7 ready';
+    renderPreview();
+    show(1);
+  }
+
+  function useSample() {
+    imgURL = null;
+    document.getElementById('fileName').textContent = 'thermal_sample_01.jpg';
+    document.getElementById('fileMeta').textContent = '320\u00d7240 \u00b7 IR thermal map \u00b7 sample';
+    renderPreview();
+    show(1);
+  }
+
+  function renderPreview() {
+    const box = document.getElementById('previewImg');
+    box.innerHTML = imgURL ? '<img src="' + imgURL + '" alt="thermal preview" />' : '';
+  }
+
+  function resetUpload() {
+    imgURL = null;
+    fileInput.value = '';
+  }
+
+  const RING_CIRC = 263.9;
+  const GAUGE_CIRC = 439.8;
+  let timers = [];
+
+  function clearTimers() { timers.forEach(t => clearTimeout(t)); timers = []; }
+
+  function startAnalysis() {
+    show(2);
+    document.getElementById('ringBar').style.strokeDashoffset = RING_CIRC;
+    document.getElementById('ringPct').textContent = '0%';
+    for (let i = 0; i < 6; i++) document.getElementById('lg' + i).classList.remove('on');
+    clearTimers();
+
+    let pct = 0;
+    const tick = setInterval(() => {
+      pct += 2;
+      if (pct > 100) { clearInterval(tick); return; }
+      document.getElementById('ringBar').style.strokeDashoffset = RING_CIRC * (1 - pct / 100);
+      document.getElementById('ringPct').textContent = pct + '%';
+    }, 70);
+
+    for (let i = 0; i < 6; i++) {
+      timers.push(setTimeout(() => document.getElementById('lg' + i).classList.add('on'), 350 + i * 600));
+    }
+    timers.push(setTimeout(() => { clearInterval(tick); showResult(); }, 4200));
+  }
+
+  function showResult() {
+    show(3);
+
+    const score = 58 + Math.floor(Math.random() * 32);
+    const conf = score + Math.floor(Math.random() * 8);
+    const confClamped = Math.min(conf, 97);
+
+    let verdict, vcolor, vbg, vborder, reco;
+    if (score < 65) {
+      verdict = 'Low likelihood of ASD traits';
+      vcolor = 'var(--ok)'; vbg = 'rgba(110,139,61,0.14)'; vborder = 'rgba(110,139,61,0.3)';
+      reco = 'Thermal patterns appear within typical range. Routine developmental monitoring is suggested as standard practice.';
+    } else if (score < 78) {
+      verdict = 'Moderate ASD trait indicators';
+      vcolor = 'var(--gold)'; vbg = 'rgba(196,139,40,0.14)'; vborder = 'rgba(196,139,40,0.3)';
+      reco = 'Some thermal indicators were detected. A follow-up clinical evaluation by a developmental specialist is recommended.';
+    } else {
+      verdict = 'Elevated ASD trait indicators';
+      vcolor = 'var(--danger)'; vbg = 'rgba(181,84,30,0.14)'; vborder = 'rgba(181,84,30,0.3)';
+      reco = 'Thermal patterns show notable indicators. Prompt referral to a qualified clinician for comprehensive assessment is strongly advised.';
+    }
+
+    const gb = document.getElementById('gaugeBar');
+    gb.style.stroke = vcolor;
+    setTimeout(() => { gb.style.transition = 'stroke-dashoffset 1.1s ease'; gb.style.strokeDashoffset = GAUGE_CIRC * (1 - score / 100); }, 60);
+
+    animateNum('scoreNum', score, '%');
+
+    const vp = document.getElementById('verdict');
+    vp.textContent = verdict;
+    vp.style.color = vcolor; vp.style.background = vbg; vp.style.border = '1px solid ' + vborder;
+
+    const m = [
+      40 + Math.floor(Math.random() * 50),
+      40 + Math.floor(Math.random() * 50),
+      40 + Math.floor(Math.random() * 50)
+    ];
+    setTimeout(() => {
+      for (let i = 0; i < 3; i++) document.getElementById('m' + i).style.width = m[i] + '%';
+    }, 200);
+
+    document.getElementById('confVal').textContent = confClamped + '%';
+    document.getElementById('recoText').textContent = reco;
+  }
+
+  function animateNum(id, target, suffix) {
+    const el = document.getElementById(id);
+    let cur = 0;
+    const step = setInterval(() => {
+      cur += 2;
+      if (cur >= target) { cur = target; clearInterval(step); }
+      el.textContent = cur + suffix;
+    }, 24);
+  }
+</script>
+</body>
+</html>
